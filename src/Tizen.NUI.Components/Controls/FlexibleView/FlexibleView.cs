@@ -45,7 +45,7 @@ namespace Tizen.NUI.Components
         public static readonly int INVALID_TYPE = -1;
 
         private Adapter mAdapter;
-        private LayoutManager mLayout;
+        private LayoutScroller mLayout;
         private Recycler mRecycler;
         private RecycledViewPool mRecyclerPool;
         private ChildHelper mChildHelper;
@@ -85,6 +85,7 @@ namespace Tizen.NUI.Components
             mAdapteHelper = new AdapterHelper(this);
 
             ClippingMode = ClippingModeType.ClipToBoundingBox;
+
         }
 
         /// <summary>
@@ -181,10 +182,10 @@ namespace Tizen.NUI.Components
                     return;
                 }
 
-                if (mLayout == null)
-                {
-                    return;
-                }
+                // if (mLayout == null)
+                // {
+                //     return;
+                // }
 
                 ViewHolder nextFocusView = FindViewHolderForAdapterPosition(value);
                 if (nextFocusView == null)
@@ -396,7 +397,7 @@ namespace Tizen.NUI.Components
 
             if (type == DisposeTypes.Explicit)
             {
-                mLayout.StopScroll();
+                StopScroll();
 
                 if (mAdapter != null)
                 {
@@ -654,7 +655,7 @@ namespace Tizen.NUI.Components
             mAdapter.OnFocusChange(this, mFocusedItemIndex, nextFocusPosition);
 
             mFocusedItemIndex = nextFocusPosition;
- 
+
            ShowScrollBar();
         }
 
@@ -705,27 +706,28 @@ namespace Tizen.NUI.Components
             }
             else if (e.PanGesture.State == Gesture.StateType.Continuing)
             {
-                if (mLayout.CanScrollVertically())
+                //if (mLayout.CanScrollVertically())
                 {
-                    mLayout.ScrollVerticallyBy(e.PanGesture.Displacement.Y, mRecycler, true);
+                    mLayout.ScrollVerticallyBy(e.PanGesture.Displacement.Y);
                 }
-                else if (mLayout.CanScrollHorizontally())
-                {
-                    mLayout.ScrollHorizontallyBy(e.PanGesture.Displacement.X, mRecycler, true);
-                }
+                // else if (mLayout.CanScrollHorizontally())
+                // {
+                //     mLayout.ScrollHorizontallyBy(e.PanGesture.Displacement.X);
+                // }
 
                 ShowScrollBar();
             }
             else if (e.PanGesture.State == Gesture.StateType.Finished)
             {
-                if (mLayout.CanScrollVertically())
+                //if (mLayout.CanScrollVertically())
                 {
-                    mLayout.ScrollVerticallyBy(e.PanGesture.Velocity.Y * 600, mRecycler, false);
+                    mLayout.ScrollVerticallyBy(e.PanGesture.Velocity.Y * 600);
                 }
-                else if (mLayout.CanScrollHorizontally())
-                {
-                    mLayout.ScrollHorizontallyBy(e.PanGesture.Velocity.X * 600, mRecycler, false);
-                }
+
+                // else if (mLayout.CanScrollHorizontally())
+                // {
+                //     mLayout.ScrollHorizontallyBy(e.PanGesture.Velocity.X * 600, mRecycler, false);
+                // }
                 ShowScrollBar(1200, true);
             }
         }
@@ -1023,7 +1025,7 @@ namespace Tizen.NUI.Components
             }
 
             /// <summary>
-            /// Notify any registered observers that the item previously located at position has been removed from the data set. 
+            /// Notify any registered observers that the item previously located at position has been removed from the data set.
             /// </summary>
             /// <param name="position">Previous position of the first item that was removed</param>
             /// <since_tizen> 6 </since_tizen>
@@ -1063,7 +1065,7 @@ namespace Tizen.NUI.Components
             [EditorBrowsable(EditorBrowsableState.Never)]
             public void NotifyItemMoved(int fromPosition, int toPosition)
             {
-               
+
             }
 
             private void OnItemEvent(object sender, ItemEventArgs e)
@@ -1130,7 +1132,7 @@ namespace Tizen.NUI.Components
 
             private List<ViewHolder> mPendingRecycleViews = new List<ViewHolder>();
 
-            private Animation mScrollAni;
+            //private Animation mScrollAni;
 
             /// <summary>
             /// Layout all relevant child views from the given adapter.
@@ -1727,16 +1729,6 @@ namespace Tizen.NUI.Components
                 mChildHelper = recyclerView.mChildHelper;
             }
 
-            internal void StopScroll()
-            {
-                if (mScrollAni != null && mScrollAni.State == Animation.States.Playing)
-                {
-                    mScrollAni.Stop(Animation.EndActions.StopFinal);
-                    mScrollAni.Clear();
-                    OnScrollAnimationFinished(mScrollAni, null);
-                }
-            }
-
             /**
              * Returns the scroll amount that brings the given rect in child's coordinate system within
              * the padded area of RecyclerView.
@@ -2293,7 +2285,7 @@ namespace Tizen.NUI.Components
         private class ChildHelper
         {
             private FlexibleView mFlexibleView;
-            
+
             private List<ViewHolder> mViewList = new List<ViewHolder>();
 
             //private List<ViewHolder> mRemovePendingViews;
@@ -2342,7 +2334,7 @@ namespace Tizen.NUI.Components
                 if (!itemViewTable.ContainsKey(holder.ItemView.ID))
                 {
                     mTapGestureDetector.Attach(holder.ItemView);
-                    holder.ItemView.TouchEvent += OnTouchEvent; 
+                    holder.ItemView.TouchEvent += OnTouchEvent;
                 }
 
                 itemViewTable[holder.ItemView.ID] = holder;

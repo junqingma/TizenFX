@@ -297,7 +297,7 @@ namespace Tizen.NUI.Components
             set
             {
                 CreateButtonTextAttributes();
-                dropDownAttributes.ButtonAttributes.TextAttributes.FontFamily = value;                
+                dropDownAttributes.ButtonAttributes.TextAttributes.FontFamily = value;
                 RelayoutRequest();
             }
         }
@@ -321,7 +321,7 @@ namespace Tizen.NUI.Components
                 {
                     dropDownAttributes.ButtonAttributes.TextAttributes.TextColor = new ColorSelector();
                 }
-                dropDownAttributes.ButtonAttributes.TextAttributes.TextColor.All = value;               
+                dropDownAttributes.ButtonAttributes.TextAttributes.TextColor.All = value;
                 RelayoutRequest();
             }
         }
@@ -343,7 +343,7 @@ namespace Tizen.NUI.Components
                 CreateButtonTextAttributes();
                 if (value != null)
                 {
-                    dropDownAttributes.ButtonAttributes.TextAttributes.TextColor = value.Clone() as ColorSelector;                    
+                    dropDownAttributes.ButtonAttributes.TextAttributes.TextColor = value.Clone() as ColorSelector;
                     RelayoutRequest();
                 }
             }
@@ -819,7 +819,7 @@ namespace Tizen.NUI.Components
                 if (listBackgroundImage == null)
                 {
                     CreateListBackgroundImage();
-                    CreateList();
+                    CreateListContainer();
                 }
                 ApplyAttributes(listBackgroundImage, dropDownAttributes.ListBackgroundImageAttributes);
                 list.FocusedItemIndex = dropDownAttributes.FocusedItemIndex;
@@ -916,7 +916,7 @@ namespace Tizen.NUI.Components
             {
                 throw new Exception("DropDown attribute parse error.");
             }
-            ApplyAttributes(this, dropDownAttributes);                  
+            ApplyAttributes(this, dropDownAttributes);
         }
 
         private void OnClickEvent(object sender, ItemClickEventArgs e)
@@ -958,12 +958,13 @@ namespace Tizen.NUI.Components
             buttonText.Hide();
         }
 
-        private void CreateList()
+        private void CreateListContainer()
         {
-            list = new FlexibleView();
+            list = new FlexibleView(); // Should get a default layout.
+            list.Layout = new LinearLayout();
             list.Name = "DropDownList";
-            LinearLayoutManager layoutManager = new LinearLayoutManager(LinearLayoutManager.VERTICAL);
-            list.SetLayoutManager(layoutManager);
+            //LinearLayoutManager layoutManager = new LinearLayoutManager(LinearLayoutManager.VERTICAL);
+            //list.SetLayoutManager(layoutManager);
             list.SetAdapter(adapter);
             list.Focusable = true;
             list.ItemTouchEvent += ListItemTouchEvent;
@@ -1017,7 +1018,7 @@ namespace Tizen.NUI.Components
                 default:
                     break;
             }
-        }      
+        }
 
         private void UpdateSelectedItem(int index)
         {
@@ -1061,7 +1062,7 @@ namespace Tizen.NUI.Components
                 PositionUsesPivotPoint = true,
                 ParentOrigin = Tizen.NUI.ParentOrigin.TopLeft,
                 PivotPoint = Tizen.NUI.PivotPoint.TopLeft,
-                WidthResizePolicy = ResizePolicyType.FitToChildren,
+                WidthResizePolicy = ResizePolicyType.FitToChildren, // todo SizeNeg won't work here.
                 HeightResizePolicy = ResizePolicyType.FitToChildren,
             };
             Add(listBackgroundImage);
@@ -1264,7 +1265,7 @@ namespace Tizen.NUI.Components
                     {
                         itemDataAttributes.BackgroundColor = value.Clone();
                     }
-                    
+
                 }
             }
 
@@ -2038,7 +2039,7 @@ namespace Tizen.NUI.Components
                     }
 
                     listItemView.IsSelected = listItemData.IsSelected;
-                }              
+                }
             }
 
             /// <summary>
@@ -2065,7 +2066,7 @@ namespace Tizen.NUI.Components
             public override int GetItemCount()
             {
                 return mDatas.Count;
-            }        
+            }
         }
         #endregion
     }

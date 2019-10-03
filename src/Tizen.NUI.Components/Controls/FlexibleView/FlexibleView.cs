@@ -86,6 +86,16 @@ namespace Tizen.NUI.Components
 
             ClippingMode = ClippingModeType.ClipToBoundingBox;
 
+            mLayout = new LayoutScroller();
+            LinearLayout linear = new LinearLayout();
+            linear.LinearOrientation = LinearLayout.Orientation.Vertical;
+            mLayout.Layout = linear;
+
+            mLayout.WidthSpecification = LayoutParamPolicies.MatchParent;
+            mLayout.HeightSpecification = LayoutParamPolicies.WrapContent;
+
+            Add(mLayout);
+
         }
 
         /// <summary>
@@ -190,11 +200,11 @@ namespace Tizen.NUI.Components
                 ViewHolder nextFocusView = FindViewHolderForAdapterPosition(value);
                 if (nextFocusView == null)
                 {
-                    mLayout.ScrollToPosition(value);
+                    //mLayout.ScrollToPosition(value);
                 }
                 else
                 {
-                    mLayout.RequestChildRectangleOnScreen(this, nextFocusView, mRecycler, true);
+                    //mLayout.RequestChildRectangleOnScreen(this, nextFocusView, mRecycler, true);
                     DispatchFocusChanged(value);
                 }
             }
@@ -236,18 +246,23 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void SetLayoutManager(LayoutManager layoutManager)
         {
-            mLayout = layoutManager;
+            // mLayout = layoutManager;
 
-            mLayout.SetRecyclerView(this);
+            // mLayout.SetRecyclerView(this);
 
-            if (mLayout.CanScrollHorizontally())
-            {
-                mPanGestureDetector.AddDirection(PanGestureDetector.DirectionHorizontal);
-            }
-            else if (mLayout.CanScrollVertically())
-            {
-                mPanGestureDetector.AddDirection(PanGestureDetector.DirectionVertical);
-            }
+            // if (mLayout.CanScrollHorizontally())
+            // {
+            //     mPanGestureDetector.AddDirection(PanGestureDetector.DirectionHorizontal);
+            // }
+            // else if (mLayout.CanScrollVertically())
+            // {
+            //     mPanGestureDetector.AddDirection(PanGestureDetector.DirectionVertical);
+            // }
+        }
+
+        public void AddChild(View view)
+        {
+            mLayout.Add(view);
         }
 
         /// <summary>
@@ -255,11 +270,11 @@ namespace Tizen.NUI.Components
         /// </summary>
         /// <since_tizen> 6 </since_tizen>
         /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public LayoutManager GetLayoutManager()
-        {
-            return mLayout;
-        }
+        //[EditorBrowsable(EditorBrowsableState.Never)]
+        // public LayoutManager GetLayoutManager()
+        // {
+        //     return mLayout;
+        // }
 
 
         /// <summary>
@@ -272,7 +287,7 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void ScrollToPositionWithOffset(int position, int offset)
         {
-            mLayout.ScrollToPositionWithOffset(position, offset);
+            //mLayout.ScrollToPositionWithOffset(position, offset);
         }
 
         /// <summary>
@@ -284,7 +299,7 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void MoveFocus(FlexibleView.LayoutManager.Direction direction)
         {
-            mLayout.MoveFocus(direction, mRecycler);
+            //mLayout.MoveFocus(direction, mRecycler);
         }
 
         /// <summary>
@@ -397,7 +412,7 @@ namespace Tizen.NUI.Components
 
             if (type == DisposeTypes.Explicit)
             {
-                StopScroll();
+                mLayout.StopScroll();
 
                 if (mAdapter != null)
                 {
@@ -465,7 +480,7 @@ namespace Tizen.NUI.Components
 
             DispatchLayoutStep1();
 
-            mLayout.OnLayoutChildren(mRecycler);
+            //mLayout.OnLayoutChildren(mRecycler);
 
             RemoveAndRecycleScrapInt();
         }
@@ -593,13 +608,13 @@ namespace Tizen.NUI.Components
                 return;
             }
 
-            float extent = mLayout.ComputeScrollExtent();
-            float range = mLayout.ComputeScrollRange();
+            float extent = 0;//mLayout.ComputeScrollExtent();
+            float range = 0;//mLayout.ComputeScrollRange();
             if(range == 0)
             {
                 return;
             }
-            float offset = mLayout.ComputeScrollOffset();
+            float offset = 0;//mLayout.ComputeScrollOffset();
 
             float size = mScrollBar.Direction == ScrollBar.DirectionType.Vertical ? mScrollBar.SizeHeight : mScrollBar.SizeWidth;
             float thickness = mScrollBar.Direction == ScrollBar.DirectionType.Vertical ? mScrollBar.SizeWidth : mScrollBar.SizeHeight;
@@ -1443,44 +1458,44 @@ namespace Tizen.NUI.Components
             [EditorBrowsable(EditorBrowsableState.Never)]
             public void OffsetChildrenHorizontal(float dx, bool immediate)
             {
-                if (mChildHelper == null)
-                {
-                    return;
-                }
+                // if (mChildHelper == null)
+                // {
+                //     return;
+                // }
 
-                if (mScrollAni == null)
-                {
-                    mScrollAni = new Animation();
-                    mScrollAni.Finished += OnScrollAnimationFinished;
-                }
-                else if (mScrollAni.State == Animation.States.Playing)
-                {
-                    //StopScroll();
-                    mScrollAni.Stop(Animation.EndActions.StopFinal);
-                }
-                mScrollAni.Duration = 500;
-                mScrollAni.DefaultAlphaFunction = new AlphaFunction(AlphaFunction.BuiltinFunctions.EaseOutSquare);
+                // if (mScrollAni == null)
+                // {
+                //     mScrollAni = new Animation();
+                //     mScrollAni.Finished += OnScrollAnimationFinished;
+                // }
+                // else if (mScrollAni.State == Animation.States.Playing)
+                // {
+                //     //StopScroll();
+                //     mScrollAni.Stop(Animation.EndActions.StopFinal);
+                // }
+                // mScrollAni.Duration = 500;
+                // mScrollAni.DefaultAlphaFunction = new AlphaFunction(AlphaFunction.BuiltinFunctions.EaseOutSquare);
 
-                mScrollAni.Clear();
+                // mScrollAni.Clear();
 
-                int childCount = mChildHelper.GetChildCount();
-                if (immediate == true)
-                {
-                    for (int i = childCount - 1; i >= 0; i--)
-                    {
-                        ViewHolder v = mChildHelper.GetChildAt(i);
-                        v.ItemView.PositionX += dx;
-                    }
-                }
-                else
-                {
-                    for (int i = childCount - 1; i >= 0; i--)
-                    {
-                        ViewHolder v = mChildHelper.GetChildAt(i);
-                        mScrollAni.AnimateTo(v.ItemView, "PositionX", v.ItemView.PositionX + dx);
-                    }
-                    mScrollAni.Play();
-                }
+                // int childCount = mChildHelper.GetChildCount();
+                // if (immediate == true)
+                // {
+                //     for (int i = childCount - 1; i >= 0; i--)
+                //     {
+                //         ViewHolder v = mChildHelper.GetChildAt(i);
+                //         v.ItemView.PositionX += dx;
+                //     }
+                // }
+                // else
+                // {
+                //     for (int i = childCount - 1; i >= 0; i--)
+                //     {
+                //         ViewHolder v = mChildHelper.GetChildAt(i);
+                //         mScrollAni.AnimateTo(v.ItemView, "PositionX", v.ItemView.PositionX + dx);
+                //     }
+                //     mScrollAni.Play();
+                // }
             }
 
             /// <summary>
@@ -1493,44 +1508,44 @@ namespace Tizen.NUI.Components
             [EditorBrowsable(EditorBrowsableState.Never)]
             public void OffsetChildrenVertical(float dy, bool immediate)
             {
-                if (mChildHelper == null)
-                {
-                    return;
-                }
+                // if (mChildHelper == null)
+                // {
+                //     return;
+                // }
 
-                if (mScrollAni == null)
-                {
-                    mScrollAni = new Animation();
-                    mScrollAni.Finished += OnScrollAnimationFinished;
-                }
-                else if (mScrollAni.State == Animation.States.Playing)
-                {
-                    //StopScroll();
-                    mScrollAni.Stop(Animation.EndActions.StopFinal);
-                }
-                mScrollAni.Duration = 500;
-                mScrollAni.DefaultAlphaFunction = new AlphaFunction(AlphaFunction.BuiltinFunctions.EaseOutSquare);
+                // if (mScrollAni == null)
+                // {
+                //     mScrollAni = new Animation();
+                //     mScrollAni.Finished += OnScrollAnimationFinished;
+                // }
+                // else if (mScrollAni.State == Animation.States.Playing)
+                // {
+                //     //StopScroll();
+                //     mScrollAni.Stop(Animation.EndActions.StopFinal);
+                // }
+                // mScrollAni.Duration = 500;
+                // mScrollAni.DefaultAlphaFunction = new AlphaFunction(AlphaFunction.BuiltinFunctions.EaseOutSquare);
 
-                mScrollAni.Clear();
+                // mScrollAni.Clear();
 
-                int childCount = mChildHelper.GetChildCount();
-                if (immediate == true)
-                {
-                    for (int i = childCount - 1; i >= 0; i--)
-                    {
-                        ViewHolder v = mChildHelper.GetChildAt(i);
-                        v.ItemView.PositionY += dy;
-                    }
-                }
-                else
-                {
-                    for (int i = childCount - 1; i >= 0; i--)
-                    {
-                        ViewHolder v = mChildHelper.GetChildAt(i);
-                        mScrollAni.AnimateTo(v.ItemView, "PositionY", v.ItemView.PositionY + dy);
-                    }
-                    mScrollAni.Play();
-                }
+                // int childCount = mChildHelper.GetChildCount();
+                // if (immediate == true)
+                // {
+                //     for (int i = childCount - 1; i >= 0; i--)
+                //     {
+                //         ViewHolder v = mChildHelper.GetChildAt(i);
+                //         v.ItemView.PositionY += dy;
+                //     }
+                // }
+                // else
+                // {
+                //     for (int i = childCount - 1; i >= 0; i--)
+                //     {
+                //         ViewHolder v = mChildHelper.GetChildAt(i);
+                //         mScrollAni.AnimateTo(v.ItemView, "PositionY", v.ItemView.PositionY + dy);
+                //     }
+                //     mScrollAni.Play();
+                // }
             }
 
             /// <summary>

@@ -1139,7 +1139,6 @@ namespace Tizen.NUI.Components
              */
             public float Extra = 0;
 
-
             /**
              * @return true if there are more items in the data adapter
              */

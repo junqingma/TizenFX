@@ -25,8 +25,6 @@ namespace Tizen.NUI.Components
     {
         private Animation scrollAnimation;
 
-        private View scrollingView;
-
         /// <summary>
         /// [Draft] Constructor
         /// </summary>
@@ -88,7 +86,7 @@ namespace Tizen.NUI.Components
 
             scrollAnimation.Clear();
 
-            scrollAnimation.AnimateTo(scrollingView, "PositionY", scrollingView.PositionY + displacement);
+            scrollAnimation.AnimateTo(this, "PositionY", this.PositionY + displacement);
             scrollAnimation.Play();
         }
 

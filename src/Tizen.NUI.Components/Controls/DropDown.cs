@@ -34,7 +34,7 @@ namespace Tizen.NUI.Components
         private TextLabel headerText = null;
         private TextLabel buttonText = null;
         private ImageView listBackgroundImage = null;
-        private FlexibleView list = null;
+        private FlexibleView flexibleView = null;
         private DropDownListBridge adapter = new DropDownListBridge();
         private DropDownAttributes dropDownAttributes = null;
         private DropDownItemView touchedView = null;
@@ -675,6 +675,18 @@ namespace Tizen.NUI.Components
         public void AddItem(DropDownItemData itemData)
         {
             adapter.InsertData(-1, itemData);
+            //FlexibleView.ViewHolder item = list.GetRecycler().GetViewForPosition(0);
+            int numberOfDataItems = adapter.GetItemCount();
+            int type = adapter.GetItemViewType(numberOfDataItems-1);
+            FlexibleView.ViewHolder view = adapter.OnCreateViewHolder(type);
+            if (!view.IsBound)
+            {
+                adapter.OnBindViewHolder(view, numberOfDataItems-1);
+                view.IsBound = true;
+            }
+            flexibleView.AddChild(view.ItemView);
+            //flexibleView.AddView(item);
+
         }
 
         /// <summary>
@@ -735,11 +747,11 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void AttachScrollBar(ScrollBar scrollBar)
         {
-            if (list == null)
+            if (flexibleView == null)
             {
                 return;
             }
-            list.AttachScrollBar(scrollBar);
+            flexibleView.AttachScrollBar(scrollBar);
         }
 
         /// <summary>
@@ -750,11 +762,11 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public void DetachScrollBar()
         {
-            if (list == null)
+            if (flexibleView == null)
             {
                 return;
             }
-            list.DetachScrollBar();
+            flexibleView.DetachScrollBar();
         }
 
         /// <summary>
@@ -819,12 +831,12 @@ namespace Tizen.NUI.Components
                 if (listBackgroundImage == null)
                 {
                     CreateListBackgroundImage();
-                    CreateListContainer();
+                    //CreateListContainer();
                 }
                 ApplyAttributes(listBackgroundImage, dropDownAttributes.ListBackgroundImageAttributes);
-                list.FocusedItemIndex = dropDownAttributes.FocusedItemIndex;
-                list.Size2D = dropDownAttributes.ListSize2D;
-                list.Padding = dropDownAttributes.ListPadding;
+                flexibleView.FocusedItemIndex = dropDownAttributes.FocusedItemIndex;
+                flexibleView.Size2D = dropDownAttributes.ListSize2D;
+                flexibleView.Padding = dropDownAttributes.ListPadding;
 
                 int listBackgroundImageX = 0;
                 int listBackgroundImageY = 0;
@@ -841,9 +853,9 @@ namespace Tizen.NUI.Components
                     if (dropDownAttributes.ListMargin != null)
                     {
                         int listWidth = 0;
-                        if (list.Size2D != null)
+                        if (flexibleView.Size2D != null)
                         {
-                            listWidth = list.Size2D.Width;
+                            listWidth = flexibleView.Size2D.Width;
                         }
                         listBackgroundImageX = Size2D.Width - listWidth - (int)dropDownAttributes.ListMargin.Y;
                         listBackgroundImageY = (int)dropDownAttributes.ListMargin.Z;
@@ -884,14 +896,14 @@ namespace Tizen.NUI.Components
                     Utility.Dispose(button);
                 }
 
-                if (list != null)
+                if (flexibleView != null)
                 {
                     if (listBackgroundImage != null)
                     {
                         Utility.Dispose(listBackgroundImage);
                     }
 
-                    Utility.Dispose(list);
+                    Utility.Dispose(flexibleView);
                 }
             }
 
@@ -911,6 +923,9 @@ namespace Tizen.NUI.Components
 
         private void Initialize()
         {
+            CreateListBackgroundImage();
+            CreateListContainer();
+
             dropDownAttributes = attributes as DropDownAttributes;
             if (dropDownAttributes == null)
             {
@@ -960,16 +975,19 @@ namespace Tizen.NUI.Components
 
         private void CreateListContainer()
         {
-            list = new FlexibleView(); // Should get a default layout.
-            list.Layout = new LinearLayout();
-            list.Name = "DropDownList";
+            flexibleView = new FlexibleView(); // Should get a default layout.
+            // LinearLayout linear = new LinearLayout();
+            // linear.LinearOrientation = LinearLayout.Orientation.Vertical;
+            // flexibleView.Layout = linear;
+
+            flexibleView.Name = "DropDownList";
             //LinearLayoutManager layoutManager = new LinearLayoutManager(LinearLayoutManager.VERTICAL);
-            //list.SetLayoutManager(layoutManager);
-            list.SetAdapter(adapter);
-            list.Focusable = true;
-            list.ItemTouchEvent += ListItemTouchEvent;
-            list.ItemClickEvent += ListItemClickEvent;
-            listBackgroundImage.Add(list);
+            //flexibleView.SetLayoutManager(layoutManager);
+            flexibleView.SetAdapter(adapter);
+            flexibleView.Focusable = true;
+            flexibleView.ItemTouchEvent += ListItemTouchEvent;
+            flexibleView.ItemClickEvent += ListItemClickEvent;
+            listBackgroundImage.Add(flexibleView);
             listBackgroundImage.Hide();
         }
 
@@ -1029,7 +1047,7 @@ namespace Tizen.NUI.Components
                 {
                     data.IsSelected = false;
                 }
-                DropDownItemView view = list?.FindViewHolderForAdapterPosition(selectedItemIndex)?.ItemView as DropDownItemView;
+                DropDownItemView view = flexibleView?.FindViewHolderForAdapterPosition(selectedItemIndex)?.ItemView as DropDownItemView;
                 if (view != null)
                 {
                     view.IsSelected = false;
@@ -1043,7 +1061,7 @@ namespace Tizen.NUI.Components
                 {
                     data.IsSelected = true;
                 }
-                DropDownItemView view = list?.FindViewHolderForAdapterPosition(index)?.ItemView as DropDownItemView;
+                DropDownItemView view = flexibleView?.FindViewHolderForAdapterPosition(index)?.ItemView as DropDownItemView;
                 if (view != null)
                 {
                     view.IsSelected = true;

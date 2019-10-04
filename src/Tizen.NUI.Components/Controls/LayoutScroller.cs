@@ -24,6 +24,7 @@ namespace Tizen.NUI.Components
     public class LayoutScroller : CustomView
     {
         private Animation scrollAnimation;
+        private float MaxScrollDistance;
 
         /// <summary>
         /// [Draft] Constructor
@@ -80,13 +81,18 @@ namespace Tizen.NUI.Components
             else if (scrollAnimation.State == Animation.States.Playing)
             {
                 scrollAnimation.Stop(Animation.EndActions.StopFinal);
+                scrollAnimation.Clear();
             }
             scrollAnimation.Duration = 500;
             scrollAnimation.DefaultAlphaFunction = new AlphaFunction(AlphaFunction.BuiltinFunctions.EaseOutSquare);
 
-            scrollAnimation.Clear();
 
-            scrollAnimation.AnimateTo(this, "PositionY", this.PositionY + displacement);
+            float targetPosition = this.PositionY + displacement;
+            targetPosition = Math.Min(0,targetPosition);
+            targetPosition = Math.Max(-MaxScrollDistance,targetPosition);
+            Console.WriteLine("TargetPosition:{0}",targetPosition);
+
+            scrollAnimation.AnimateTo(this, "PositionY", targetPosition);
             scrollAnimation.Play();
         }
 
@@ -97,12 +103,16 @@ namespace Tizen.NUI.Components
                 return 0;
             }
 
+            View parent = GetParent() as View;
+
+            MaxScrollDistance = CurrentSize.Height -parent.CurrentSize.Height;
+
             //int layoutDirection = displacement < 0 ? LayoutState.LAYOUT_END : LayoutState.LAYOUT_START;
             float absDisplacement = Math.Abs(displacement);
             //UpdateLayoutState(layoutDirection, absDy, true);
             //float consumed = mLayoutState.ScrollingOffset;
 
-            OffsetChildrenVertical(absDisplacement);
+            OffsetChildrenVertical(displacement);
             //mOrientationHelper.OffsetChildren(scrolled, immediate);
 
 

@@ -831,7 +831,6 @@ namespace Tizen.NUI.Components
                 if (listBackgroundImage == null)
                 {
                     CreateListBackgroundImage();
-                    //CreateListContainer();
                 }
                 ApplyAttributes(listBackgroundImage, dropDownAttributes.ListBackgroundImageAttributes);
                 flexibleView.FocusedItemIndex = dropDownAttributes.FocusedItemIndex;
@@ -976,13 +975,7 @@ namespace Tizen.NUI.Components
         private void CreateListContainer()
         {
             flexibleView = new FlexibleView(); // Should get a default layout.
-            // LinearLayout linear = new LinearLayout();
-            // linear.LinearOrientation = LinearLayout.Orientation.Vertical;
-            // flexibleView.Layout = linear;
-
             flexibleView.Name = "DropDownList";
-            //LinearLayoutManager layoutManager = new LinearLayoutManager(LinearLayoutManager.VERTICAL);
-            //flexibleView.SetLayoutManager(layoutManager);
             flexibleView.SetAdapter(adapter);
             flexibleView.Focusable = true;
             flexibleView.ItemTouchEvent += ListItemTouchEvent;

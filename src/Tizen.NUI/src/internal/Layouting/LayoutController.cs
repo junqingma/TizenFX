@@ -30,7 +30,7 @@ namespace Tizen.NUI
     /// </summary>
     internal class LayoutController : Disposable
     {
-        static bool LayoutDebugController = false; // Debug flag
+        static bool LayoutDebugController = true; // Debug flag
 
         private global::System.Runtime.InteropServices.HandleRef unmanagedLayoutController;
 
@@ -201,6 +201,7 @@ namespace Tizen.NUI
         {
             if (rootNode.Layout != null)
             {
+                Debug.WriteLineIf( LayoutDebugController, "LayoutController Root found:" + rootNode.Name);
                 // rootNode has a layout, ensure all children have default layouts or layout items.
                 AutomaticallyAssignLayouts(rootNode);
                 // rootNode has a layout, start measuring and layouting from here.
@@ -247,8 +248,8 @@ namespace Tizen.NUI
 
                 LayoutLength width = new LayoutLength(rootSize.Width);
                 LayoutLength height = new LayoutLength(rootSize.Height);
-                MeasureSpecification.ModeType widthMode = MeasureSpecification.ModeType.AtMost;
-                MeasureSpecification.ModeType heightMode = MeasureSpecification.ModeType.AtMost;
+                MeasureSpecification.ModeType widthMode = MeasureSpecification.ModeType.Unspecified;
+                MeasureSpecification.ModeType heightMode = MeasureSpecification.ModeType.Unspecified;
 
                 if ( root.WidthSpecification >= 0 )
                 {

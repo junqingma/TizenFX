@@ -86,13 +86,15 @@ namespace Tizen.NUI.Components
 
             ClippingMode = ClippingModeType.ClipToBoundingBox;
 
-            mLayout = new LayoutScroller();
             LinearLayout linear = new LinearLayout();
             linear.LinearOrientation = LinearLayout.Orientation.Vertical;
-            mLayout.Layout = linear;
-
-            mLayout.WidthSpecification = LayoutParamPolicies.MatchParent;
-            mLayout.HeightSpecification = LayoutParamPolicies.WrapContent;
+            mLayout = new LayoutScroller()
+            {
+                Layout = linear,
+                Name = "LayoutScroller",
+                WidthSpecification = LayoutParamPolicies.MatchParent,
+                HeightSpecification = LayoutParamPolicies.WrapContent,//768,//
+            };
 
             Add(mLayout);
 
@@ -265,30 +267,7 @@ namespace Tizen.NUI.Components
             mLayout.Add(view);
         }
 
-        /// <summary>
-        /// Return the FlexibleView.LayoutManager currently responsible for layout policy for this FlexibleView.
-        /// </summary>
-        /// <since_tizen> 6 </since_tizen>
-        /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-        //[EditorBrowsable(EditorBrowsableState.Never)]
-        // public LayoutManager GetLayoutManager()
-        // {
-        //     return mLayout;
-        // }
 
-
-        /// <summary>
-        /// Convenience method to scroll to a certain position
-        /// </summary>
-        /// <param name="position">Adapter position</param>
-        /// <param name="offset">The distance (in pixels) between the start edge of the item view and start edge of the FlexibleView.</param>
-        /// <since_tizen> 6 </since_tizen>
-        /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void ScrollToPositionWithOffset(int position, int offset)
-        {
-            //mLayout.ScrollToPositionWithOffset(position, offset);
-        }
 
         /// <summary>
         /// Move focus by direction.
@@ -296,11 +275,11 @@ namespace Tizen.NUI.Components
         /// <param name="direction">Direction. Should be "Left", "Right", "Up" or "Down" </param>
         /// <since_tizen> 6 </since_tizen>
         /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void MoveFocus(FlexibleView.LayoutManager.Direction direction)
-        {
-            //mLayout.MoveFocus(direction, mRecycler);
-        }
+        // [EditorBrowsable(EditorBrowsableState.Never)]
+        // public void MoveFocus(FlexibleView.LayoutManager.Direction direction)
+        // {
+        //     //mLayout.MoveFocus(direction, mRecycler);
+        // }
 
         /// <summary>
         /// Attach a scrollbar to this FlexibleView.
@@ -478,10 +457,6 @@ namespace Tizen.NUI.Components
                 return;
             }
 
-            DispatchLayoutStep1();
-
-            //mLayout.OnLayoutChildren(mRecycler);
-
             RemoveAndRecycleScrapInt();
         }
 
@@ -505,12 +480,6 @@ namespace Tizen.NUI.Components
             }
         }
 
-        private void DispatchLayoutStep1()
-        {
-            ProcessAdapterUpdates();
-            SaveOldPositions();
-            ClearOldPositions();
-        }
 
         private void ProcessAdapterUpdates()
         {
@@ -566,26 +535,6 @@ namespace Tizen.NUI.Components
                 {
                     mFocusedItemIndex = mAdapter.GetItemCount() - 1;
                 }
-            }
-        }
-
-        private void SaveOldPositions()
-        {
-            int childCount = mChildHelper.GetChildCount();
-            for (int i = 0; i < childCount; i++)
-            {
-                ViewHolder holder = mChildHelper.GetChildAt(i);
-                holder.SaveOldPosition();
-            }
-        }
-
-        private void ClearOldPositions()
-        {
-            int childCount = mChildHelper.GetChildCount();
-            for (int i = 0; i < childCount; i++)
-            {
-                ViewHolder holder = mChildHelper.GetChildAt(i);
-                holder.ClearOldPosition();
             }
         }
 
@@ -1147,26 +1096,6 @@ namespace Tizen.NUI.Components
 
             private List<ViewHolder> mPendingRecycleViews = new List<ViewHolder>();
 
-            //private Animation mScrollAni;
-
-            /// <summary>
-            /// Layout all relevant child views from the given adapter.
-            /// </summary>
-            /// <param name="recycler">Recycler to use for fetching potentially cached views for a position</param>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public abstract void OnLayoutChildren(Recycler recycler);
-
-            /// <summary>
-            /// Called after a full layout calculation is finished.
-            /// </summary>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual void OnLayoutCompleted()
-            {
-            }
 
 
             /// <summary>
@@ -1199,170 +1128,30 @@ namespace Tizen.NUI.Components
                 }
             }
 
-            /// <summary>
-            /// Query if horizontal scrolling is currently supported. The default implementation returns false.
-            /// </summary>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual bool CanScrollHorizontally()
-            {
-                return false;
-            }
+            // internal void MoveFocus(FlexibleView.LayoutManager.Direction direction, Recycler recycler)
+            // {
+            //     int prevFocusPosition = FocusPosition;
+            //     int nextFocusPosition = GetNextPosition(FocusPosition, direction);
+            //     if (nextFocusPosition == NO_POSITION)
+            //     {
+            //         return;
+            //     }
 
-            /// <summary>
-            /// Query if vertical scrolling is currently supported. The default implementation returns false.
-            /// </summary>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual bool CanScrollVertically()
-            {
-                return false;
-            }
+            //     FlexibleView.ViewHolder nextFocusChild = FindItemViewByPosition(nextFocusPosition);
+            //     if (nextFocusChild == null)
+            //     {
+            //         nextFocusChild = OnFocusSearchFailed(null, direction, recycler);
+            //     }
 
-            /// <summary>
-            /// Scroll horizontally by dy pixels in screen coordinates.
-            /// </summary>
-            /// <param name="dy">distance to scroll in pixels. Y increases as scroll position approaches the top.</param>
-            /// <param name="recycler">Recycler to use for fetching potentially cached views for a position</param>
-            /// <param name="immediate">Specify if the scroll need animation</param>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual float ScrollHorizontallyBy(float dy, Recycler recycler, bool immediate)
-            {
-                return 0;
-            }
+            //     if (nextFocusChild != null)
+            //     {
+            //         RequestChildRectangleOnScreen(mFlexibleView, nextFocusChild, recycler, false);
 
-            /// <summary>
-            /// Scroll vertically by dy pixels in screen coordinates.
-            /// </summary>
-            /// <param name="dy">distance to scroll in pixels. Y increases as scroll position approaches the top.</param>
-            /// <param name="recycler">Recycler to use for fetching potentially cached views for a position</param>
-            /// <param name="immediate">Specify if the scroll need animation</param>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual float ScrollVerticallyBy(float dy, Recycler recycler, bool immediate)
-            {
-                return 0;
-            }
+            //         ChangeFocus(nextFocusPosition);
+            //     }
+            // }
 
-            /// <summary>
-            /// Compute the extent of the scrollbar's thumb within the range.
-            /// </summary>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual float ComputeScrollExtent()
-            {
-                return 0;
-            }
 
-            /// <summary>
-            /// Compute the offset of the scrollbar's thumb within the range.
-            /// </summary>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual float ComputeScrollOffset()
-            {
-                return 0;
-            }
-
-            /// <summary>
-            /// Compute the range that the scrollbar represents.
-            /// </summary>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual float ComputeScrollRange()
-            {
-                return 0;
-            }
-
-            /// <summary>
-            /// Scroll the FlexibleView to make the position visible.
-            /// </summary>
-            /// <param name="position">Scroll to this adapter position</param>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual void ScrollToPosition(int position)
-            {
-
-            }
-
-            /// <summary>
-            /// Scroll to the specified adapter position with the given offset from resolved layout start.
-            /// </summary>
-            /// <param name="position">Scroll to this adapter position</param>
-            /// <param name="offset">The distance (in pixels) between the start edge of the item view and start edge of the FlexibleView.</param>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public virtual void ScrollToPositionWithOffset(int position, int offset)
-            {
-
-            }
-
-            internal void MoveFocus(FlexibleView.LayoutManager.Direction direction, Recycler recycler)
-            {
-                int prevFocusPosition = FocusPosition;
-                int nextFocusPosition = GetNextPosition(FocusPosition, direction);
-                if (nextFocusPosition == NO_POSITION)
-                {
-                    return;
-                }
-
-                FlexibleView.ViewHolder nextFocusChild = FindItemViewByPosition(nextFocusPosition);
-                if (nextFocusChild == null)
-                {
-                    nextFocusChild = OnFocusSearchFailed(null, direction, recycler);
-                }
-
-                if (nextFocusChild != null)
-                {
-                    RequestChildRectangleOnScreen(mFlexibleView, nextFocusChild, recycler, false);
-
-                    ChangeFocus(nextFocusPosition);
-                }
-            }
-
-            /**
-             * Requests that the given child of the RecyclerView be positioned onto the screen. This
-             * method can be called for both unfocusable and focusable child views. For unfocusable
-             * child views, focusedChildVisible is typically true in which case, layout manager
-             * makes the child view visible only if the currently focused child stays in-bounds of RV.
-             * @param parent The parent RecyclerView.
-             * @param child The direct child making the request.
-             * @param rect The rectangle in the child's coordinates the child
-             *              wishes to be on the screen.
-             * @param immediate True to forbid animated or delayed scrolling,
-             *                  false otherwise
-             * @param focusedChildVisible Whether the currently focused view must stay visible.
-             * @return Whether the group scrolled to handle the operation
-             */
-            internal bool RequestChildRectangleOnScreen(FlexibleView parent, FlexibleView.ViewHolder child, Recycler recycler, bool immediate)
-            {
-                Vector2 scrollAmount = GetChildRectangleOnScreenScrollAmount(parent, child);
-                float dx = scrollAmount[0];
-                float dy = scrollAmount[1];
-                if (dx != 0 || dy != 0)
-                {
-                    if (dx != 0 && CanScrollHorizontally())
-                    {
-                        ScrollHorizontallyBy(dx, recycler, immediate);
-                    }
-                    else if (dy != 0 && CanScrollVertically())
-                    {
-                        ScrollVerticallyBy(dy, recycler, immediate);
-                    }
-                    return true;
-                }
-                return false;
-            }
 
             /// <summary>
             /// Calls {@code FlexibleView#RelayoutRequest} on the underlying FlexibleView.
@@ -1378,25 +1167,7 @@ namespace Tizen.NUI.Components
                 }
             }
 
-            /// <summary>
-            /// Lay out the given child view within the FlexibleView using coordinates that include view margins.
-            /// </summary>
-            /// <param name="child">Child to lay out</param>
-            /// <param name="left">Left edge, with item view left margin included</param>
-            /// <param name="top">Top edge, with item view top margin included</param>
-            /// <param name="width">Width, with item view left and right margin included</param>
-            /// <param name="height">Height, with item view top and bottom margin included</param>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public void LayoutChild(ViewHolder child, float left, float top, float width, float height)
-            {
-                View itemView = child.ItemView;
-                itemView.SizeWidth = width - itemView.Margin.Start - itemView.Margin.End;
-                itemView.SizeHeight = height - itemView.Margin.Top - itemView.Margin.Bottom;
-                itemView.PositionX = left + itemView.Margin.Start;
-                itemView.PositionY = top + itemView.Margin.Top;
-            }
+
 
             /// <summary>
             /// Change the ViewHolder with focusPosition to focus.
@@ -1448,127 +1219,7 @@ namespace Tizen.NUI.Components
                 return mFlexibleView.FindViewHolderForLayoutPosition(position);
             }
 
-            /// <summary>
-            /// Offset all child views attached to the parent FlexibleView by dx pixels along the horizontal axis.
-            /// </summary>
-            /// <param name="dx">Pixels to offset by </param>
-            /// <param name="immediate">specify if the offset need animation</param>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public void OffsetChildrenHorizontal(float dx, bool immediate)
-            {
-                // if (mChildHelper == null)
-                // {
-                //     return;
-                // }
 
-                // if (mScrollAni == null)
-                // {
-                //     mScrollAni = new Animation();
-                //     mScrollAni.Finished += OnScrollAnimationFinished;
-                // }
-                // else if (mScrollAni.State == Animation.States.Playing)
-                // {
-                //     //StopScroll();
-                //     mScrollAni.Stop(Animation.EndActions.StopFinal);
-                // }
-                // mScrollAni.Duration = 500;
-                // mScrollAni.DefaultAlphaFunction = new AlphaFunction(AlphaFunction.BuiltinFunctions.EaseOutSquare);
-
-                // mScrollAni.Clear();
-
-                // int childCount = mChildHelper.GetChildCount();
-                // if (immediate == true)
-                // {
-                //     for (int i = childCount - 1; i >= 0; i--)
-                //     {
-                //         ViewHolder v = mChildHelper.GetChildAt(i);
-                //         v.ItemView.PositionX += dx;
-                //     }
-                // }
-                // else
-                // {
-                //     for (int i = childCount - 1; i >= 0; i--)
-                //     {
-                //         ViewHolder v = mChildHelper.GetChildAt(i);
-                //         mScrollAni.AnimateTo(v.ItemView, "PositionX", v.ItemView.PositionX + dx);
-                //     }
-                //     mScrollAni.Play();
-                // }
-            }
-
-            /// <summary>
-            /// Offset all child views attached to the parent FlexibleView by dy pixels along the vertical axis.
-            /// </summary>
-            /// <param name="dy">Pixels to offset by </param>
-            /// <param name="immediate">specify if the offset need animation</param>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public void OffsetChildrenVertical(float dy, bool immediate)
-            {
-                // if (mChildHelper == null)
-                // {
-                //     return;
-                // }
-
-                // if (mScrollAni == null)
-                // {
-                //     mScrollAni = new Animation();
-                //     mScrollAni.Finished += OnScrollAnimationFinished;
-                // }
-                // else if (mScrollAni.State == Animation.States.Playing)
-                // {
-                //     //StopScroll();
-                //     mScrollAni.Stop(Animation.EndActions.StopFinal);
-                // }
-                // mScrollAni.Duration = 500;
-                // mScrollAni.DefaultAlphaFunction = new AlphaFunction(AlphaFunction.BuiltinFunctions.EaseOutSquare);
-
-                // mScrollAni.Clear();
-
-                // int childCount = mChildHelper.GetChildCount();
-                // if (immediate == true)
-                // {
-                //     for (int i = childCount - 1; i >= 0; i--)
-                //     {
-                //         ViewHolder v = mChildHelper.GetChildAt(i);
-                //         v.ItemView.PositionY += dy;
-                //     }
-                // }
-                // else
-                // {
-                //     for (int i = childCount - 1; i >= 0; i--)
-                //     {
-                //         ViewHolder v = mChildHelper.GetChildAt(i);
-                //         mScrollAni.AnimateTo(v.ItemView, "PositionY", v.ItemView.PositionY + dy);
-                //     }
-                //     mScrollAni.Play();
-                // }
-            }
-
-            /// <summary>
-            /// Return the width of the parent FlexibleView.
-            /// </summary>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public float GetWidth()
-            {
-                return mFlexibleView != null ? mFlexibleView.SizeWidth : 0;
-            }
-
-            /// <summary>
-            /// Return the height of the parent FlexibleView.
-            /// </summary>
-            /// <since_tizen> 6 </since_tizen>
-            /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-            [EditorBrowsable(EditorBrowsableState.Never)]
-            public float GetHeight()
-            {
-                return mFlexibleView != null ? mFlexibleView.SizeHeight : 0;
-            }
 
             /// <summary>
             /// Return the left padding of the parent FlexibleView.
@@ -1742,52 +1393,6 @@ namespace Tizen.NUI.Components
             {
                 mFlexibleView = recyclerView;
                 mChildHelper = recyclerView.mChildHelper;
-            }
-
-            /**
-             * Returns the scroll amount that brings the given rect in child's coordinate system within
-             * the padded area of RecyclerView.
-             * @param parent The parent RecyclerView.
-             * @param child The direct child making the request.
-             * @param rect The rectangle in the child's coordinates the child
-             *             wishes to be on the screen.
-             * @param immediate True to forbid animated or delayed scrolling,
-             *                  false otherwise
-             * @return The array containing the scroll amount in x and y directions that brings the
-             * given rect into RV's padded area.
-             */
-            private Vector2 GetChildRectangleOnScreenScrollAmount(FlexibleView parent, FlexibleView.ViewHolder child)
-            {
-                Vector2 ret = new Vector2(0, 0);
-                int parentLeft = GetPaddingLeft();
-                int parentTop = GetPaddingTop();
-                int parentRight = (int)GetWidth() - GetPaddingRight();
-                int parentBottom = (int)GetHeight() - GetPaddingBottom();
-                int childLeft = (int)child.Left;
-                int childTop = (int)child.Top;
-                int childRight = (int)child.Right;
-                int childBottom = (int)child.Bottom;
-
-                int offScreenLeft = Math.Min(0, childLeft - parentLeft);
-                int offScreenTop = Math.Min(0, childTop - parentTop);
-                int offScreenRight = Math.Max(0, childRight - parentRight);
-                int offScreenBottom = Math.Max(0, childBottom - parentBottom);
-
-                // Favor the "start" layout direction over the end when bringing one side or the other
-                // of a large rect into view. If we decide to bring in end because start is already
-                // visible, limit the scroll such that start won't go out of bounds.
-                int dx= offScreenLeft != 0 ? offScreenLeft
-                            : Math.Min(childLeft - parentLeft, offScreenRight);
-
-                // Favor bringing the top into view over the bottom. If top is already visible and
-                // we should scroll to make bottom visible, make sure top does not go out of bounds.
-                int dy = offScreenTop != 0 ? offScreenTop
-                        : Math.Min(childTop - parentTop, offScreenBottom);
-
-                ret.X = -dx;
-                ret.Y = -dy;
-
-                return ret;
             }
 
             private void OnScrollAnimationFinished(object sender, EventArgs e)

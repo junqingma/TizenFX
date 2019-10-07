@@ -37,8 +37,9 @@ namespace Tizen.NUI.Components
         private FlexibleView flexibleView = null;
         private DropDownListBridge adapter = new DropDownListBridge();
         private DropDownAttributes dropDownAttributes = null;
-        private DropDownItemView touchedView = null;
         private int selectedItemIndex = -1;
+
+        private bool itemPressed = false;
 
         private TapGestureDetector tapGestureDetector = null;
 
@@ -677,7 +678,6 @@ namespace Tizen.NUI.Components
         public void AddItem(DropDownItemData itemData)
         {
             adapter.InsertData(-1, itemData);
-            //FlexibleView.ViewHolder item = list.GetRecycler().GetViewForPosition(0);
             int numberOfDataItems = adapter.GetItemCount();
             int type = adapter.GetItemViewType(numberOfDataItems-1);
             FlexibleView.ViewHolder viewHolder = adapter.OnCreateViewHolder(type);
@@ -692,9 +692,7 @@ namespace Tizen.NUI.Components
                 tapGestureDetector = new TapGestureDetector();
             }
             View view = viewHolder.ItemView;
-            tapGestureDetector.Attach(view);
-            tapGestureDetector.Detected += TapGestureEvent;
-
+            view.TouchEvent += ListItemTouchEvent;
             flexibleView.AddChild(view);
 
         }
@@ -723,6 +721,8 @@ namespace Tizen.NUI.Components
             }
 
             adapter.RemoveData(index);
+
+            //todo disconnect TouchEvent??
         }
 
         /// <summary>
@@ -974,7 +974,7 @@ namespace Tizen.NUI.Components
                 PositionUsesPivotPoint = true,
                 ParentOrigin = Tizen.NUI.ParentOrigin.TopLeft,
                 PivotPoint = Tizen.NUI.PivotPoint.TopLeft,
-                WidthResizePolicy = ResizePolicyType.UseNaturalSize,cd
+                WidthResizePolicy = ResizePolicyType.UseNaturalSize,
                 HeightResizePolicy = ResizePolicyType.FillToParent,
             };
             buttonText.Name = "DropDownButtonText";
@@ -988,42 +988,51 @@ namespace Tizen.NUI.Components
             flexibleView.Name = "DropDownList";
             flexibleView.SetAdapter(adapter);
             flexibleView.Focusable = true;
-            flexibleView.ItemTouchEvent += ListItemTouchEvent;
             listBackgroundImage.Add(flexibleView);
             listBackgroundImage.Hide();
         }
 
 
-        private void ListItemTouchEvent(object sender, FlexibleView.ItemTouchEventArgs e)
+
+        private bool ListItemTouchEvent(object sender, TouchEventArgs e)
         {
             PointStateType state = e.Touch.GetState(0);
+            DropDownItemView touchedView = sender as DropDownItemView;;
             switch (state)
             {
                 case PointStateType.Down:
-                    if (e.TouchedView != null)
+                    if (touchedView != null && touchedView.BackgroundColorSelector != null)
                     {
-                        touchedView = e.TouchedView.ItemView as DropDownItemView;
-                        if (touchedView != null && touchedView.BackgroundColorSelector != null)
-                        {
-                            touchedView.BackgroundColor = touchedView.BackgroundColorSelector.GetValue(ControlStates.Pressed);
-                        }
+                        touchedView.BackgroundColor = touchedView.BackgroundColorSelector.GetValue(ControlStates.Pressed);
                     }
+                    itemPressed = true;  // if matched with a Up then a click event.
                     break;
                 case PointStateType.Motion:
                     if (touchedView != null && touchedView.BackgroundColorSelector != null)
                     {
                         touchedView.BackgroundColor = touchedView.BackgroundColorSelector.GetValue(ControlStates.Normal);
                     }
+                    itemPressed = false;
                     break;
                 case PointStateType.Up:
                     if (touchedView != null && touchedView.BackgroundColorSelector != null)
                     {
                         touchedView.BackgroundColor = touchedView.BackgroundColorSelector.GetValue(ControlStates.Selected);
+
+                        if (itemPressed)  // if Down was previously sent without motion (Scrolling) in-between then a clicked event occurred.
+                        {
+                            // List item clicked
+                            Console.WriteLine("Tapped{0}", touchedView.Name);
+                            button.Text = touchedView.Text;
+                            button.Show();
+                            listBackgroundImage.Hide();
+                        }
                     }
                     break;
                 default:
                     break;
             }
+            return true;
         }
 
         private void UpdateSelectedItem(int index)
@@ -1078,18 +1087,6 @@ namespace Tizen.NUI.Components
         {
             button.Hide();
             listBackgroundImage.Show();
-        }
-
-
-        private void TapGestureEvent(object source, TapGestureDetector.DetectedEventArgs e)
-        {
-            View view = e.View as View;
-            if (view !=null)
-            {
-                Console.WriteLine("Tapped{0}", view.Name);
-            }
-            button.Show();
-            listBackgroundImage.Hide();
         }
 
         private void CreateHeaderTextAttributes()

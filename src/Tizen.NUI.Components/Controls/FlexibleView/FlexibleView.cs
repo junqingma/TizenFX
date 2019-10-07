@@ -194,11 +194,6 @@ namespace Tizen.NUI.Components
                     return;
                 }
 
-                // if (mLayout == null)
-                // {
-                //     return;
-                // }
-
                 ViewHolder nextFocusView = FindViewHolderForAdapterPosition(value);
                 if (nextFocusView == null)
                 {

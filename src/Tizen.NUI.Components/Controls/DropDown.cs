@@ -40,6 +40,8 @@ namespace Tizen.NUI.Components
         private DropDownItemView touchedView = null;
         private int selectedItemIndex = -1;
 
+        private TapGestureDetector tapGestureDetector = null;
+
         /// <summary>
         /// Creates a new instance of a DropDown.
         /// </summary>
@@ -678,14 +680,22 @@ namespace Tizen.NUI.Components
             //FlexibleView.ViewHolder item = list.GetRecycler().GetViewForPosition(0);
             int numberOfDataItems = adapter.GetItemCount();
             int type = adapter.GetItemViewType(numberOfDataItems-1);
-            FlexibleView.ViewHolder view = adapter.OnCreateViewHolder(type);
-            if (!view.IsBound)
+            FlexibleView.ViewHolder viewHolder = adapter.OnCreateViewHolder(type);
+            if (!viewHolder.IsBound)
             {
-                adapter.OnBindViewHolder(view, numberOfDataItems-1);
-                view.IsBound = true;
+                adapter.OnBindViewHolder(viewHolder, numberOfDataItems-1);
+                viewHolder.IsBound = true;
             }
-            flexibleView.AddChild(view.ItemView);
-            //flexibleView.AddView(item);
+
+            if (tapGestureDetector == null)
+            {
+                tapGestureDetector = new TapGestureDetector();
+            }
+            View view = viewHolder.ItemView;
+            tapGestureDetector.Attach(view);
+            tapGestureDetector.Detected += TapGestureEvent;
+
+            flexibleView.AddChild(view);
 
         }
 
@@ -964,7 +974,7 @@ namespace Tizen.NUI.Components
                 PositionUsesPivotPoint = true,
                 ParentOrigin = Tizen.NUI.ParentOrigin.TopLeft,
                 PivotPoint = Tizen.NUI.PivotPoint.TopLeft,
-                WidthResizePolicy = ResizePolicyType.UseNaturalSize,
+                WidthResizePolicy = ResizePolicyType.UseNaturalSize,cd
                 HeightResizePolicy = ResizePolicyType.FillToParent,
             };
             buttonText.Name = "DropDownButtonText";
@@ -979,25 +989,10 @@ namespace Tizen.NUI.Components
             flexibleView.SetAdapter(adapter);
             flexibleView.Focusable = true;
             flexibleView.ItemTouchEvent += ListItemTouchEvent;
-            flexibleView.ItemClickEvent += ListItemClickEvent;
             listBackgroundImage.Add(flexibleView);
             listBackgroundImage.Hide();
         }
 
-        private void ListItemClickEvent(object sender, FlexibleView.ItemClickEventArgs e)
-        {
-            if (e.ClickedView != null)
-            {
-                UpdateSelectedItem(e.ClickedView.AdapterPosition);
-
-                ItemClickEventArgs args = new ItemClickEventArgs();
-                args.Index = e.ClickedView.AdapterPosition;
-                args.Text = (e.ClickedView.ItemView as DropDownItemView)?.Text;
-                OnClickEvent(this, args);
-            }
-
-            listBackgroundImage.Hide();
-        }
 
         private void ListItemTouchEvent(object sender, FlexibleView.ItemTouchEventArgs e)
         {
@@ -1081,7 +1076,20 @@ namespace Tizen.NUI.Components
 
         private void ButtonClickEvent(object sender, Button.ClickEventArgs e)
         {
+            button.Hide();
             listBackgroundImage.Show();
+        }
+
+
+        private void TapGestureEvent(object source, TapGestureDetector.DetectedEventArgs e)
+        {
+            View view = e.View as View;
+            if (view !=null)
+            {
+                Console.WriteLine("Tapped{0}", view.Name);
+            }
+            button.Show();
+            listBackgroundImage.Hide();
         }
 
         private void CreateHeaderTextAttributes()
